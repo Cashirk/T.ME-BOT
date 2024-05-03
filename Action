@@ -1,0 +1,33 @@
+// Telegram Bot的API令牌
+var telegramBotToken = "6353755303:AAEhN-EozBAWO02AEm5IAoofAsf9wD0yYgk";
+
+function doPost(e) {
+  var contents = JSON.parse(e.postData.contents);
+  var message = contents.message;
+  var chatId = message.chat.id;
+  var text = message.text;
+
+  if (text.indexOf("/fortune") !== -1) {
+    // 计算好运和倒霉的概率
+    var goodLuckProbability = Math.floor(Math.random() * 101); // 0到100之间的随机数
+    var badLuckProbability = 100 - goodLuckProbability;
+
+    // 发送回复消息
+    var replyMessage = "今天的好运概率是：" + goodLuckProbability + "%\n" +
+                       "今天的倒霉概率是：" + badLuckProbability + "%";
+    sendTelegramMessage(chatId, replyMessage);
+  }
+}
+
+function sendTelegramMessage(chatId, text) {
+  var telegramUrl = "https://api.telegram.org/bot" + telegramBotToken + "/sendMessage";
+  var payload = {
+    "method": "post",
+    "contentType": "application/json",
+    "payload": JSON.stringify({
+      "chat_id": String(chatId),
+      "text": text
+    })
+  };
+  UrlFetchApp.fetch(telegramUrl, payload);
+}
